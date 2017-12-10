@@ -1,0 +1,15 @@
+Uninstall gcc-arm-none-eabi
+To remove just gcc-arm-none-eabi package itself from Ubuntu 14.10 (Utopic Unicorn) execute on terminal:
+
+sudo apt-get remove gcc-arm-none-eabi
+Uninstall gcc-arm-none-eabi and it's dependent packages
+To remove the gcc-arm-none-eabi package and any other dependant package which are no longer needed from Ubuntu Utopic.
+
+sudo apt-get remove --auto-remove gcc-arm-none-eabi
+Purging gcc-arm-none-eabi
+If you also want to delete configuration and/or data files of gcc-arm-none-eabi from Ubuntu Utopic then this will work:
+
+sudo apt-get purge gcc-arm-none-eabi
+To delete configuration and/or data files of gcc-arm-none-eabi and it's dependencies from Ubuntu Utopic then execute:
+
+sudo apt-get purge --auto-remove gcc-arm-none-eabi
