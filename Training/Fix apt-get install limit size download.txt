@@ -1,0 +1,5 @@
+switch to hcm-repo:
+
+sudo wget http://hcm-repo.fsoft.com.vn/setup/installrepo.sh
+sudo chmod 777 installrepo.sh
+sudo ./installrepo.sh

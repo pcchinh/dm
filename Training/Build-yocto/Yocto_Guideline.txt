@@ -1,0 +1,53 @@
+﻿/* Clone repository */
+$ git clone http://10.88.14.210:8080/20pf_als
+
+/* cd into repository */
+$ cd 20pf_als
+
+/* Checkout branch JKC_Release */
+$ git checkout JKC_Release
+
+/* Apply patch for yocto config */
+$ git am <path>
+<path>: Đường dẫn tới file kernel_build.patch được đính kèm
+
+/* Install required package */
+$ sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib \
+build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
+xz-utils debianutils iputils-ping libsdl1.2-dev xterm
+
+/* Build compiler */
+$ cd tools
+$ ./x86_64-buildtools-nativesdk-standalone-2.4.3.sh
+$ ./telechips-als-v3.0.2-toolchain-cortexa53hf-neon-fp-armv8-opengl-wayland-qt5-x86_64-gcc-linaro-7.2.sh
+
+/* cd back repository root */
+cd ..
+
+/* Edit file svn_account.inc */
+$ vi buildscripts/env/svn_account.inc
+
+Thêm 2 trường như sau:
+SVN_USER="abc"
+SVN_PASSWORD="123456"
+
+//giá trị "abc" và "123456" là random để tránh lỗi
+
+/* Edite file jk_buld_env */
+$ vi .buildscripts/env/jk_build_env.sh
+
+Sửa 2 trường: JK_BSP_COMMIT_ID và JK_SOURCE_GIT_BRANCH cho phù hợp
+
+/* Build Yocto */
+$ ./buildscripts/20Common_qb/jk_build_all.sh
+
+/* Error có thể xảy ra */
+ERROR: No space left on device or exceeds fs.inotify.max_user_wahtches
+
+/* Fix */
+//Check max_user_wathces
+$ sysctl -n fs.inotify.max_user_watches
+//tăng max_user_watches
+$ sysctl -n fs.inotify.max_user_watches=102400
+//Chạy lại lệnh build
+$ ./buildscripts/20Common_qb/jk_build_kernel.sh

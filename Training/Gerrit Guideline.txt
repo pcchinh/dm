@@ -1,0 +1,132 @@
+﻿ CONFIGURATION trước khi làm việc:
+
+	Cách 1: nhập các lệnh sau
+		$ git config --global user.name anhnsd
+		$ git config --global user.email AnhNSD@fsoft.com.vn
+	
+	NOTE: user name thì viết thường, email thì viết hoa như ví dụ
+
+	Cách 2: sửa file ~/.gitconfig (Linux) hoặc %USER%/.gitconfig (WINDOWS) thêm/sửa những dòng sau:
+
+	----------------------------------------------------------
+
+	[user]
+		name=anhnsd
+		email=AnhNSD@fsoft.com.vn
+
+	----------------------------------------------------------
+
+CLONE PROJECT
+	$ git clone 10.88.14.210:8080/<tên project>
+
+	<tên project> có thể tìm thấy ở: http://10.88.14.210:8080/#/admin/projects/ (cần login)
+
+BRANCH LÀM VIỆC
+	$ git checkout <tên branch> 		//đổi branch làm việc ở local
+	$ git checkout -b <tên branch> 	//tạo mới branch làm việc
+QUY TRÌNH LÀM VIỆC
+	//Sau khi làm việc xong commit lên HEAD:refs/for/<team branch>
+(optional)	$git status		// xem thay đổi
+	$ git add <file> 		//<file> tên file cần commit
+(hoặc)	$ git add *			//add tất cả file vào commit
+	$ git commit -m "<message>"	//commit với commit meassage là <message>
+(hoặc)	$ git commit -F <file>		//commit với commit message viết sẵn ở <file>	
+	/* MESSAGE FORMAT ở phía dưới */
+	$ git push origin HEAD:refs/for/<team branch>	//push lên <branch> đợi team leader review
+
+Chú ý: KHÔNG 		$ git push <branch> 		// push lên <branch> và bypass team leader review
+			$ git push HEAD:refs/for/master	//push lên master cho KH review
+			$ git push master		//push lên master, bypass KH review
+
+
+SỬA COMMIT 
+	Scenario: [branch làm việc]:(commit 1)
+	Giả thích scenario: commit 1 error hoặc bị reject bởi reviewer
+	Giải pháp : sử dụng option --amend để sửa commit 1
+	Cách thức: 
+	
+		$ git commit --amend -m "<message>"	//để sửa commit 1
+
+		Fetch và push lên HEAD:refs/changes/<change-id>
+	Ví dụ: (commit 1) được commit lên server với change-id là 1024 nhưng bị reject
+		//Sau khi sửa xong (assuming là đang làm việc trên đúng branch)
+		$ git add <files>
+		$ git commit --amend -m "<message>"	// <message> sửa lại theo message format hoặc sử dụng --no-edit để giữ nguyên commit message
+		$ git fetch
+		$ git push origin HEAD:refs/changes/1024	//1024 là change-id
+
+	Để tìm <Change-ID> vào trang http://10.88.14.210:8080/#/dashboard/self
+	Chọn changes mình cần commit
+	Trên URL, số cuối là <change-ID> vd: http://10.88.14.210:8080/#/c/cosmos/bsp/kernel_4.4/+/165/ => <Change-ID> là 165
+
+	Note: nếu không muốn sửa commit message thì không dùng option -m mà thay vào đó dùng option --no-edit
+
+
+COMMIT MESSAGE FORMAT
+
+	------------------------------------------------------------------
+	
+	[<Label>:<Function/ModuleName>] <commit sumary>
+
+	[Ticket]-<Ticket description if any>
+	[Target]-<Target description if any>
+	[Comment]
+		・<comment 1>
+		・<conment 2>
+
+	------------------------------------------------------------------
+	Giải thích:
+		<Label>:  	là giá trị trong {Add, Update, Fix, Refactor}
+				Add: add new function/module
+				Update: Improve function/module
+				Fix: Fix function/module bug
+				Refactor: thay đổi mà không ảnh hưởng chức năng của product
+		<Function/Module Name>: Tên function/module
+
+
+
+REVIEWER
+	Khi member commit sẽ có mail thông báo của server
+	Truy cập http://10.88.14.210:8080/#/q/status:open và xem commit của members
+	Chọn Submit để merge vào branch
+	Chọn Reject để reject change
+
+MERGE NHIỀU COMMIT THÀNH 1 COMMIT
+	$ git log
+	/* lệnh này sẽ hiển thị tất cả các commit, giả dụ như sau:
+		
+		---------------------------
+		commit 1    <commit key>
+		<commit message>
+
+		commit 2    <commit2 key>
+		<commit message>
+
+		commit 3   <commit3 key>
+		<commit message>
+
+		commit 4    <commit4 key>
+		<commit message>
+		------------------------------
+	ví dụ muốn gộp commit 2,3,4 lại với nhau thành commit 5
+	*/
+	$ git reset --soft <commit1 key>
+	$ git commit -m "<message>"	//tạo commit 5
+	$ git pull
+	$ git push HEAD:refs/changes/<Change-ID>
+
+	/* ví dụ muốn gộp commit 2,3,4 vào chung với commit 2*/
+	$ git reset --soft <commit2 key>
+	$ git commit --amend -m "<message>"
+	$ git pull
+	$ git push HEAD:refs/changes/<Changes-ID>
+
+	Để tìm <Change-ID> vào trang http://10.88.14.210:8080/#/dashboard/self
+	Chọn changes mình cần commit
+	Trên URL, số cuối là <change-ID> vd: http://10.88.14.210:8080/#/c/cosmos/bsp/kernel_4.4/+/165/ => <Change-ID> là 165
+
+ADDITION COMMAND
+	$ git status 		//xem status hiện tại của local repo
+	$ git fetch			// fetch thay đổi
+	$ history			//xem lịch sử lệnh              
+	$ git log 			// xem log                                                                                                                                                                                                                                                                                    

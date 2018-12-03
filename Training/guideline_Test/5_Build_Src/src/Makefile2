@@ -1,0 +1,15 @@
+
+LDFLAGS=-pthread
+ObjectDir = built/
+
+.PHONY: clean all
+
+built/%.o: %.c produce.h
+	$(CC) -c $< -o $@
+ 
+built/myapp: main.o producer.o cosumer.o
+	$(CC) main.o producer.o cosumer.o -o myapp $(LDFLAGS)
+ 
+clean:
+	rm -f *.o *~ myapp
+
